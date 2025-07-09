@@ -1,0 +1,5 @@
+kafka-python==2.0.2
+spacy==3.7.4 
+# Modelo pré-treinado em português para o spaCy
+# O link direto garante que sempre baixaremos a mesma versão do modelo.
+https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0.tar.gz
