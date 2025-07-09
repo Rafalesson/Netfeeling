@@ -1,0 +1,6 @@
+# Ignorar arquivos de ambiente que contêm segredos
+.env
+
+# Outras coisas comuns a ignorar em projetos Python
+__pycache__/
+*.pyc
