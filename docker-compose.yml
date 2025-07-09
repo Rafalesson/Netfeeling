@@ -75,14 +75,31 @@ services:
         build: ./services/analise-python
         container_name: analise-python
         environment:
-          # Ele precisa das mesmas variáveis para saber onde se conectar
           - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
           - KAFKA_TOPIC=noticias_coletadas
+          - KAFKA_ANALYSIS_TOPIC=analises_concluidas
         networks:
           - netfeeling-network
         depends_on:
           - kafka
           - coletor-python
+  
+  kafka-topic-creator:
+    image: confluentinc/cp-kafka:7.0.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - netfeeling-network
+    command: >
+      sh -c "
+        echo 'Aguardando Kafka estar pronto...' &&
+        cub kafka-ready -b kafka:9092 1 30 &&
+        echo 'Kafka pronto. Criando tópicos...' &&
+        kafka-topics --create --if-not-exists --topic noticias_coletadas --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 &&
+        kafka-topics --create --if-not-exists --topic analises_concluidas --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 &&
+        echo 'Tópicos criados com sucesso.'
+      "
 
 # Define o volume que usamos acima para persistir os dados do MongoDB.
 volumes:
