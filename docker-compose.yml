@@ -37,7 +37,12 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-
+    
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   # Nosso banco de dados NoSQL para armazenar os dados das notícias e análises.
   mongodb:
     image: mongo:latest
@@ -63,7 +68,8 @@ services:
     networks:
       - netfeeling-network
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
   analise-python:
         build: ./services/analise-python
