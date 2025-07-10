@@ -83,6 +83,22 @@ services:
         depends_on:
           - kafka
           - coletor-python
+
+  api-go:
+    build: ./services/api-go
+    container_name: api-go
+    ports:
+      - "8081:8081"
+    networks:
+      - netfeeling-network
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_ANALYSIS_TOPIC=analises_concluidas
+    depends_on:
+      mongodb:
+        condition: service_started # Exemplo, podemos ajustar depois
+      kafka:
+        condition: service_healthy
   
   kafka-topic-creator:
     image: confluentinc/cp-kafka:7.0.1
